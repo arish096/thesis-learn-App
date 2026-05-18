@@ -76,10 +76,14 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "description", content: "AI tutor for Indian students (Class 9-12). Text, voice & image doubts in English and Hinglish." },
       { name: "author", content: "AI Tutor" },
       { property: "og:title", content: "AI Tutor — CBSE / JEE / NEET Coach" },
-      { property: "og:description", content: "AI tutor for Indian students (Class 9-12)." },
+      { property: "og:description", content: "AI tutor for Indian students (Class 9-12). Text, voice & image doubts in English and Hinglish." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "twitter:site", content: "@Lovable" },
+      { name: "twitter:title", content: "AI Tutor — CBSE / JEE / NEET Coach" },
+      { name: "twitter:description", content: "AI tutor for Indian students (Class 9-12). Text, voice & image doubts in English and Hinglish." },
+      { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/efea512b-d533-479d-aafe-0552d25eb7d3" },
+      { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/efea512b-d533-479d-aafe-0552d25eb7d3" },
     ],
     links: [
       {
