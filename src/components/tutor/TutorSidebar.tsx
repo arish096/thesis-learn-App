@@ -1,5 +1,7 @@
-import { Plus, MessageSquare, BookOpen, GraduationCap, Sparkles, Trash2 } from "lucide-react";
+import { Plus, MessageSquare, BookOpen, GraduationCap, Sparkles, Trash2, LogOut, Mic } from "lucide-react";
+import { Link } from "@tanstack/react-router";
 import type { Conversation, StudentProfile } from "@/lib/tutor.types";
+import { supabase } from "@/integrations/supabase/client";
 
 const STUDY_TOPICS: Record<string, string[]> = {
   "9": ["Number Systems", "Motion & Force", "Atoms and Molecules", "Tissues"],
@@ -15,19 +17,22 @@ interface Props {
   onSelect: (id: string) => void;
   onNew: () => void;
   onDelete: (id: string) => void;
-  onResetProfile: () => void;
   open: boolean;
   onClose: () => void;
 }
 
 export function TutorSidebar({
-  profile, conversations, activeId, onSelect, onNew, onDelete, onResetProfile, open, onClose,
+  profile, conversations, activeId, onSelect, onNew, onDelete, open, onClose,
 }: Props) {
   const topics = STUDY_TOPICS[profile.class] ?? [];
 
+  async function signOut() {
+    await supabase.auth.signOut();
+    window.location.href = "/login";
+  }
+
   return (
     <>
-      {/* Mobile overlay */}
       {open && (
         <button
           aria-label="Close sidebar"
@@ -46,7 +51,7 @@ export function TutorSidebar({
               <GraduationCap className="h-5 w-5" />
             </div>
             <div className="flex-1 min-w-0">
-              <div className="font-semibold text-sm truncate">AI Tutor</div>
+              <div className="font-semibold text-sm truncate">{profile.name ?? "AI Tutor"}</div>
               <div className="text-xs text-muted-foreground flex items-center gap-1">
                 <Sparkles className="h-3 w-3" /> Class {profile.class} · {profile.stream}
               </div>
@@ -59,6 +64,12 @@ export function TutorSidebar({
           >
             <Plus className="h-4 w-4" /> New Chat
           </button>
+          <Link
+            to="/talk"
+            className="mt-2 w-full flex items-center justify-center gap-2 rounded-lg py-2 text-sm font-medium border bg-background/60 hover:bg-accent transition"
+          >
+            <Mic className="h-4 w-4" /> Live Talk
+          </Link>
         </div>
 
         <div className="flex-1 overflow-y-auto p-3 space-y-5">
@@ -81,7 +92,12 @@ export function TutorSidebar({
                       onClick={() => onSelect(c.id)}
                     >
                       <MessageSquare className="h-3.5 w-3.5 shrink-0 opacity-70" />
-                      <span className="flex-1 truncate">{c.title}</span>
+                      <div className="flex-1 min-w-0">
+                        <div className="truncate">{c.title}</div>
+                        <div className="text-[10px] text-muted-foreground">
+                          {new Date(c.updated_at).toLocaleDateString()}
+                        </div>
+                      </div>
                       <button
                         aria-label="Delete"
                         onClick={(e) => { e.stopPropagation(); onDelete(c.id); }}
@@ -113,10 +129,10 @@ export function TutorSidebar({
 
         <div className="p-3 border-t">
           <button
-            onClick={onResetProfile}
-            className="w-full text-xs text-muted-foreground hover:text-foreground transition py-2"
+            onClick={signOut}
+            className="w-full flex items-center justify-center gap-2 text-xs text-muted-foreground hover:text-destructive transition py-2"
           >
-            Change class / stream
+            <LogOut className="h-3.5 w-3.5" /> Sign out
           </button>
         </div>
       </aside>

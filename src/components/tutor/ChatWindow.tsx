@@ -1,15 +1,18 @@
 import { useEffect, useRef, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { Mic, MicOff, Image as ImageIcon, Send, Volume2, VolumeX, X, GraduationCap, Menu, Sparkles } from "lucide-react";
-import type { ChatMessage, Conversation, StudentProfile } from "@/lib/tutor.types";
-import { askTutor } from "@/lib/tutor.functions";
+import { Link } from "@tanstack/react-router";
+import type { ChatMessage, StudentProfile } from "@/lib/tutor.types";
+import { askTutor } from "@/lib/chat.functions";
 import { getSpeechRecognition, speak, stopSpeaking } from "@/lib/speech";
 import { MarkdownMessage } from "./MarkdownMessage";
 
 interface Props {
   profile: StudentProfile;
-  conversation: Conversation;
-  onUpdate: (c: Conversation) => void;
+  conversationId: string | null;
+  messages: ChatMessage[];
+  title: string;
+  onConversationUpdated: (id: string) => void;
   onOpenSidebar: () => void;
 }
 
@@ -20,7 +23,7 @@ const SUGGESTIONS = [
   "Difference between DNA and RNA",
 ];
 
-export function ChatWindow({ profile, conversation, onUpdate, onOpenSidebar }: Props) {
+export function ChatWindow({ profile, conversationId, messages, title, onConversationUpdated, onOpenSidebar }: Props) {
   const ask = useServerFn(askTutor);
   const [input, setInput] = useState("");
   const [image, setImage] = useState<string | null>(null);
@@ -28,15 +31,17 @@ export function ChatWindow({ profile, conversation, onUpdate, onOpenSidebar }: P
   const [listening, setListening] = useState(false);
   const [speakingId, setSpeakingId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [pendingUser, setPendingUser] = useState<ChatMessage | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const recRef = useRef<ReturnType<typeof getSpeechRecognition>>(null);
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
-  }, [conversation.messages, loading]);
+  }, [messages, loading, pendingUser]);
 
   useEffect(() => () => stopSpeaking(), []);
+  useEffect(() => setPendingUser(null), [messages.length]);
 
   async function handleImage(file: File) {
     if (file.size > 5 * 1024 * 1024) {
@@ -49,16 +54,9 @@ export function ChatWindow({ profile, conversation, onUpdate, onOpenSidebar }: P
   }
 
   function toggleMic() {
-    if (listening) {
-      recRef.current?.stop();
-      setListening(false);
-      return;
-    }
+    if (listening) { recRef.current?.stop(); setListening(false); return; }
     const rec = getSpeechRecognition();
-    if (!rec) {
-      setError("Voice input is not supported in this browser. Try Chrome.");
-      return;
-    }
+    if (!rec) { setError("Voice input not supported in this browser. Try Chrome."); return; }
     rec.lang = "en-IN";
     rec.onresult = (e) => {
       const t = e.results[0][0].transcript;
@@ -92,50 +90,30 @@ export function ChatWindow({ profile, conversation, onUpdate, onOpenSidebar }: P
     if (!content && !image) return;
     setError(null);
 
-    const userMsg: ChatMessage = {
-      id: crypto.randomUUID(),
+    const optimistic: ChatMessage = {
+      id: "tmp-" + crypto.randomUUID(),
       role: "user",
       content: content || "(image)",
-      image: image ?? undefined,
-      timestamp: Date.now(),
+      image: image,
+      created_at: new Date().toISOString(),
     };
-    const nextMessages = [...conversation.messages, userMsg];
-    const title =
-      conversation.messages.length === 0
-        ? content.slice(0, 48) || "Image question"
-        : conversation.title;
-    onUpdate({ ...conversation, messages: nextMessages, title, updatedAt: Date.now() });
+    setPendingUser(optimistic);
     setInput("");
+    const sentImage = image;
     setImage(null);
     setLoading(true);
 
     try {
       const result = await ask({
-        data: {
-          studentClass: profile.class,
-          stream: profile.stream,
-          messages: nextMessages.map((m) => ({
-            role: m.role,
-            content: m.content,
-            image: m.image,
-          })),
-        },
+        data: { conversationId, content, image: sentImage },
       });
       if ("error" in result && result.error) {
         setError(result.error);
-      } else if ("reply" in result && result.reply) {
-        const aiMsg: ChatMessage = {
-          id: crypto.randomUUID(),
-          role: "assistant",
-          content: result.reply,
-          timestamp: Date.now(),
-        };
-        onUpdate({
-          ...conversation,
-          messages: [...nextMessages, aiMsg],
-          title,
-          updatedAt: Date.now(),
-        });
+        if ("conversationId" in result && result.conversationId) {
+          onConversationUpdated(result.conversationId);
+        }
+      } else if ("conversationId" in result && result.conversationId) {
+        onConversationUpdated(result.conversationId);
       }
     } catch (e) {
       console.error(e);
@@ -145,7 +123,8 @@ export function ChatWindow({ profile, conversation, onUpdate, onOpenSidebar }: P
     }
   }
 
-  const isEmpty = conversation.messages.length === 0;
+  const displayed: ChatMessage[] = pendingUser ? [...messages, pendingUser] : messages;
+  const isEmpty = displayed.length === 0;
 
   return (
     <div className="flex flex-col h-full">
@@ -157,9 +136,15 @@ export function ChatWindow({ profile, conversation, onUpdate, onOpenSidebar }: P
           <GraduationCap className="h-5 w-5" />
         </div>
         <div className="flex-1 min-w-0">
-          <div className="font-semibold text-sm truncate">{conversation.title}</div>
+          <div className="font-semibold text-sm truncate">{title}</div>
           <div className="text-xs text-muted-foreground">Class {profile.class} · {profile.stream}</div>
         </div>
+        <Link
+          to="/talk"
+          className="hidden sm:inline-flex items-center gap-1.5 text-xs font-medium rounded-full border px-3 py-1.5 hover:bg-accent transition"
+        >
+          <Mic className="h-3.5 w-3.5" /> Live Talk
+        </Link>
       </header>
 
       <div ref={scrollRef} className="flex-1 overflow-y-auto px-4 md:px-6 py-6">
@@ -189,7 +174,7 @@ export function ChatWindow({ profile, conversation, onUpdate, onOpenSidebar }: P
             </div>
           )}
 
-          {conversation.messages.map((m) => (
+          {displayed.map((m) => (
             <div key={m.id} className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}>
               <div
                 className={`max-w-[88%] md:max-w-[78%] rounded-2xl px-4 py-3 ${
@@ -282,10 +267,7 @@ export function ChatWindow({ profile, conversation, onUpdate, onOpenSidebar }: P
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => {
-                if (e.key === "Enter" && !e.shiftKey) {
-                  e.preventDefault();
-                  send();
-                }
+                if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); send(); }
               }}
               rows={1}
               placeholder="Ask your doubt... (English / Hindi / Hinglish)"
