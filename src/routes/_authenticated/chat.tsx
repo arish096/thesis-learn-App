@@ -7,6 +7,7 @@ import { ChatWindow } from "@/components/tutor/ChatWindow";
 import { OnboardingDialog } from "@/components/tutor/Onboarding";
 import { getMyProfile } from "@/lib/auth.functions";
 import { listConversations, getConversation, deleteConversation } from "@/lib/chat.functions";
+import type { ChatMessage, StudentProfile } from "@/lib/tutor.types";
 
 export const Route = createFileRoute("/_authenticated/chat")({
   head: () => ({
