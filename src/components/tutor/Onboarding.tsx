@@ -1,6 +1,8 @@
 import { useState } from "react";
-import type { StudentClass, Stream, StudentProfile } from "@/lib/tutor.types";
-import { GraduationCap, Sparkles } from "lucide-react";
+import { useServerFn } from "@tanstack/react-start";
+import { GraduationCap, Sparkles, Loader2 } from "lucide-react";
+import type { StudentClass, Stream } from "@/lib/tutor.types";
+import { upsertMyProfile } from "@/lib/auth.functions";
 
 const CLASSES: StudentClass[] = ["9", "10", "11", "12"];
 const STREAMS_LOWER: Stream[] = ["General"];
@@ -12,26 +14,48 @@ const STREAMS_UPPER: Stream[] = [
   "Humanities",
 ];
 
-export function Onboarding({ onComplete }: { onComplete: (p: StudentProfile) => void }) {
+export function OnboardingDialog({ onDone }: { onDone: () => void }) {
+  const save = useServerFn(upsertMyProfile);
   const [studentClass, setStudentClass] = useState<StudentClass | null>(null);
   const [stream, setStream] = useState<Stream | null>(null);
   const [name, setName] = useState("");
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const streamOptions = studentClass && Number(studentClass) >= 11 ? STREAMS_UPPER : STREAMS_LOWER;
+  const canSubmit = !!studentClass && !!stream && !saving;
 
-  const canSubmit = studentClass && stream;
+  async function submit() {
+    if (!canSubmit) return;
+    setSaving(true);
+    setError(null);
+    try {
+      await save({
+        data: {
+          class: studentClass!,
+          stream: stream!,
+          name: name.trim() || null,
+        },
+      });
+      onDone();
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Could not save profile.");
+    } finally {
+      setSaving(false);
+    }
+  }
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4" style={{ background: "var(--gradient-subtle)" }}>
-      <div className="w-full max-w-xl bg-card border rounded-2xl shadow-xl p-8 md:p-10">
+    <div className="min-h-screen flex items-center justify-center px-4 py-10" style={{ background: "var(--gradient-subtle)" }}>
+      <div className="w-full max-w-xl rounded-3xl border border-white/30 dark:border-white/10 bg-white/60 dark:bg-white/5 backdrop-blur-xl shadow-2xl p-8 md:p-10">
         <div className="flex items-center gap-3 mb-6">
           <div className="h-12 w-12 rounded-xl flex items-center justify-center text-primary-foreground" style={{ background: "var(--gradient-primary)" }}>
             <GraduationCap className="h-6 w-6" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold">Welcome to AI Tutor</h1>
+            <h1 className="text-2xl font-bold">Tell us about you</h1>
             <p className="text-sm text-muted-foreground flex items-center gap-1">
-              <Sparkles className="h-3.5 w-3.5" /> Your personal CBSE / JEE / NEET coach
+              <Sparkles className="h-3.5 w-3.5" /> We'll personalise every answer for your syllabus
             </p>
           </div>
         </div>
@@ -53,10 +77,7 @@ export function Onboarding({ onComplete }: { onComplete: (p: StudentProfile) => 
               {CLASSES.map((c) => (
                 <button
                   key={c}
-                  onClick={() => {
-                    setStudentClass(c);
-                    setStream(null);
-                  }}
+                  onClick={() => { setStudentClass(c); setStream(null); }}
                   className={`rounded-lg border py-3 text-sm font-semibold transition ${
                     studentClass === c
                       ? "border-primary bg-primary text-primary-foreground shadow-md"
@@ -92,19 +113,19 @@ export function Onboarding({ onComplete }: { onComplete: (p: StudentProfile) => 
             </div>
           )}
 
+          {error && (
+            <div className="text-xs rounded-lg bg-destructive/10 text-destructive border border-destructive/30 px-3 py-2">
+              {error}
+            </div>
+          )}
+
           <button
             disabled={!canSubmit}
-            onClick={() =>
-              canSubmit &&
-              onComplete({
-                class: studentClass!,
-                stream: stream!,
-                name: name.trim() || undefined,
-              })
-            }
-            className="w-full rounded-lg py-3 text-sm font-semibold text-primary-foreground transition disabled:opacity-50 disabled:cursor-not-allowed shadow-md hover:shadow-lg"
+            onClick={submit}
+            className="w-full rounded-lg py-3 text-sm font-semibold text-primary-foreground transition disabled:opacity-50 disabled:cursor-not-allowed shadow-md hover:shadow-lg flex items-center justify-center gap-2"
             style={{ background: "var(--gradient-primary)" }}
           >
+            {saving && <Loader2 className="h-4 w-4 animate-spin" />}
             Start Learning →
           </button>
         </div>
