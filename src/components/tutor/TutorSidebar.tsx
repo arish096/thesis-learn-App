@@ -17,12 +17,13 @@ interface Props {
   onSelect: (id: string) => void;
   onNew: () => void;
   onDelete: (id: string) => void;
+  onEditProfile: () => void;
   open: boolean;
   onClose: () => void;
 }
 
 export function TutorSidebar({
-  profile, conversations, activeId, onSelect, onNew, onDelete, open, onClose,
+  profile, conversations, activeId, onSelect, onNew, onDelete, onEditProfile, open, onClose,
 }: Props) {
   const topics = STUDY_TOPICS[profile.class] ?? [];
 
