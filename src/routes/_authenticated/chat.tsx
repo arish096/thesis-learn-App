@@ -71,10 +71,13 @@ function ChatPage() {
     );
   }
 
+  const profile = profileQ.data as StudentProfile;
+  const messages = (activeQ.data?.messages ?? []) as ChatMessage[];
+
   return (
     <div className="flex h-screen overflow-hidden" style={{ background: "var(--gradient-subtle)" }}>
       <TutorSidebar
-        profile={profileQ.data}
+        profile={profile}
         conversations={convosQ.data ?? []}
         activeId={activeId}
         onSelect={(id) => { setActiveId(id); setSidebarOpen(false); }}
@@ -85,9 +88,9 @@ function ChatPage() {
       />
       <main className="flex-1 flex flex-col min-w-0">
         <ChatWindow
-          profile={profileQ.data}
+          profile={profile}
           conversationId={activeId}
-          messages={activeQ.data?.messages ?? []}
+          messages={messages}
           title={activeQ.data?.title ?? "New chat"}
           onConversationUpdated={handleConvoUpdated}
           onOpenSidebar={() => setSidebarOpen(true)}
