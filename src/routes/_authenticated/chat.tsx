@@ -64,10 +64,13 @@ function ChatPage() {
     return <div className="min-h-screen" style={{ background: "var(--gradient-subtle)" }} />;
   }
 
-  if (!profileQ.data) {
+  if (!profileQ.data || editingProfile) {
     return (
       <OnboardingDialog
-        onDone={() => qc.invalidateQueries({ queryKey: ["profile"] })}
+        onDone={() => {
+          setEditingProfile(false);
+          qc.invalidateQueries({ queryKey: ["profile"] });
+        }}
       />
     );
   }
