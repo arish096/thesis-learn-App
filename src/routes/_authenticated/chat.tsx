@@ -35,6 +35,7 @@ function ChatPage() {
 
   const [activeId, setActiveId] = useState<string | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [editingProfile, setEditingProfile] = useState(false);
 
   const activeQ = useQuery({
     queryKey: ["conversation", activeId],
