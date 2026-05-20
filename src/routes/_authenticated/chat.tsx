@@ -87,6 +87,7 @@ function ChatPage() {
         onSelect={(id) => { setActiveId(id); setSidebarOpen(false); }}
         onNew={handleNew}
         onDelete={handleDelete}
+        onEditProfile={() => { setEditingProfile(true); setSidebarOpen(false); }}
         open={sidebarOpen}
         onClose={() => setSidebarOpen(false)}
       />
