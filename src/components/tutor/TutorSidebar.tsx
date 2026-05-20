@@ -57,6 +57,14 @@ export function TutorSidebar({
                 <Sparkles className="h-3 w-3" /> Class {profile.class} · {profile.stream}
               </div>
             </div>
+            <button
+              onClick={onEditProfile}
+              aria-label="Change class or stream"
+              title="Change class / stream"
+              className="h-8 w-8 rounded-md flex items-center justify-center hover:bg-sidebar-accent transition text-muted-foreground hover:text-foreground"
+            >
+              <Pencil className="h-3.5 w-3.5" />
+            </button>
           </div>
           <button
             onClick={onNew}
