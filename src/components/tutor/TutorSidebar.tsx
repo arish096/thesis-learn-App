@@ -1,4 +1,4 @@
-import { Plus, MessageSquare, BookOpen, GraduationCap, Sparkles, Trash2, LogOut, Mic } from "lucide-react";
+import { Plus, MessageSquare, BookOpen, GraduationCap, Sparkles, Trash2, LogOut, Mic, Pencil } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import type { Conversation, StudentProfile } from "@/lib/tutor.types";
 import { supabase } from "@/integrations/supabase/client";
