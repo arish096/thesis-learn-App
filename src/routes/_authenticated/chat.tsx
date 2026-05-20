@@ -35,6 +35,7 @@ function ChatPage() {
 
   const [activeId, setActiveId] = useState<string | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [editingProfile, setEditingProfile] = useState(false);
 
   const activeQ = useQuery({
     queryKey: ["conversation", activeId],
@@ -63,10 +64,13 @@ function ChatPage() {
     return <div className="min-h-screen" style={{ background: "var(--gradient-subtle)" }} />;
   }
 
-  if (!profileQ.data) {
+  if (!profileQ.data || editingProfile) {
     return (
       <OnboardingDialog
-        onDone={() => qc.invalidateQueries({ queryKey: ["profile"] })}
+        onDone={() => {
+          setEditingProfile(false);
+          qc.invalidateQueries({ queryKey: ["profile"] });
+        }}
       />
     );
   }
@@ -83,6 +87,7 @@ function ChatPage() {
         onSelect={(id) => { setActiveId(id); setSidebarOpen(false); }}
         onNew={handleNew}
         onDelete={handleDelete}
+        onEditProfile={() => { setEditingProfile(true); setSidebarOpen(false); }}
         open={sidebarOpen}
         onClose={() => setSidebarOpen(false)}
       />
