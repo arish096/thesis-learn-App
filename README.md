@@ -1,58 +1,150 @@
-# EduBuddy AI
+# 🎓 Thesis Learn — AI Tutor
 
-Create a full-stack AI Tutor Web Application designed for Indian students (Class 9th to 12th) covering all subjects (Science, Commerce, Humanities). The application should have a friendly, encouraging, and clean educational UI/UX.
+> **AI-powered learning companion for CBSE, JEE & NEET preparation**
 
-Key Features to Implement:
+**Thesis Learn** is an AI-powered educational platform designed to help students learn smarter through personalized explanations, interactive learning, and AI-assisted academic support.
 
-1. Student Onboarding: A simple setup where a student can select their Class (9, 10, 11, or 12) and their Stream/Subject. This selection should contextualize all future AI responses.
+🌐 **Live Demo:** https://thesis-learn.lovable.app
 
-2. Dual-Input Chat Interface:
+---
 
-   - Text Chat: A clean, modern chat interface to type doubts.
+## ✨ Overview
 
-   - Voice Input: A microphone button that uses the Web Speech API (Speech-to-Text) so students can ask doubts by speaking in English, Hindi, or Hinglish.
+Thesis Learn aims to make exam preparation more **personalized, interactive, and accessible**.
 
-3. Photo/Image Upload: A file upload button in the chat bar allowing students to upload images of textbook problems, math equations, or diagrams for the AI to analyze.
+Instead of simply providing static study material, the platform is designed around an AI tutor experience that can help students understand concepts, clarify doubts, and improve their preparation according to their learning needs.
 
-4. AI Response Layer:
+The platform focuses on students preparing for:
 
-   - Integrate the Gemini 1.5 Flash API (or a mock service if API keys are separate) with a strict system prompt: "Act as an expert, empathetic CBSE/JEE Mains & Advance/NEET tutor for classes 9-12. Explain complex concepts step-by-step using simple analogies, formatting answers with clear headings and bullet points. Match the student's language (English/Hinglish)."
+* 📚 **CBSE**
+* ⚡ **JEE**
+* 🩺 **NEET**
 
-   - Render mathematical equations beautifully using KaTeX/LaTeX formatting.
+---
 
-5. Voice Output (Text-to-Speech): A "Listen" speaker icon next to every AI response that reads the answer out loud using the browser's built-in Web Speech Synthesis or a standard TTS API.
+## 🚀 Key Features
 
-6. History & Dashboard: A sidebar that saves recent conversations and lists upcoming study topics.
+* 🤖 **AI Tutor** — Get AI-assisted explanations and academic guidance
+* 📖 **Concept Learning** — Understand topics instead of simply memorizing them
+* 🎯 **Exam-Focused Preparation** — Designed around CBSE, JEE and NEET learning goals
+* 💡 **Doubt Solving** — Ask questions and get step-by-step assistance
+* 🧠 **Personalized Learning** — Learn at your own pace
+* ⚡ **Interactive Experience** — Modern and student-friendly learning interface
+* 📱 **Responsive Design** — Designed to work across different screen sizes
 
-Design Requirements:
+---
 
-- Use a modern, accessible color palette (e.g., Indigo/Violet/Blue tones) that feels academic yet tech-forward.
+## 🎯 Target Students
 
-- Fully responsive design (mobile-first, since many students study on phones).
+| Student           | Purpose                                      |
+| ----------------- | -------------------------------------------- |
+| 📚 CBSE Students  | Concept learning & exam preparation          |
+| ⚡ JEE Aspirants   | Physics, Chemistry & Mathematics preparation |
+| 🩺 NEET Aspirants | Physics, Chemistry & Biology preparation     |
 
-- Clean code structure splitting UI components, voice utilities, and API call handlers.
+---
 
--
+## 🛠️ Tech & Development
 
-This project was built with [Lovable](https://lovable.dev).
+The project was developed with a modern AI-assisted web development workflow.
 
-**Live app**: https://thesis-learn.lovable.app
+### Core Technologies
 
-## Build with Lovable
+* 🌐 Modern Web Technologies
+* 🤖 AI-powered learning workflows
+* 🎨 Responsive UI/UX
+* ⚡ Modern frontend architecture
+* ☁️ Web-based deployment
 
-Continue developing this project in the [Lovable editor](https://lovable.dev/projects/b4f456c8-93be-4f82-b265-4e8ffc9eaf3b).
+> **Note:** The exact technology stack may evolve as the project continues to be developed.
 
-- **Ship faster**: describe what you want to build and Lovable handles the code.
-- **Stay in sync**: every change made in Lovable is committed straight to this repository.
-- **Full ownership**: this code is yours. Push to `main` on GitHub and your changes sync back into Lovable, ready for your next prompt.
+---
 
-## Development
+## 🧩 How It Works
 
-Prefer working locally? You need Node.js and npm — [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating).
-
-```sh
-git clone <this-repository-url>
-cd <repository-name>
-npm i
-npm run dev
+```text
+Student
+   │
+   ▼
+Ask a Question / Select Learning Need
+   │
+   ▼
+AI Tutor
+   │
+   ├── Concept Explanation
+   ├── Doubt Resolution
+   ├── Guided Learning
+   └── Exam Preparation
+   │
+   ▼
+Student Understanding
 ```
+
+---
+
+## 🌟 Why Thesis Learn?
+
+Traditional learning platforms often provide the same content to every student.
+
+Thesis Learn focuses on an **AI-first learning experience**, where students can interact with an intelligent tutor and receive assistance based on what they are trying to understand.
+
+### The goal is simple:
+
+> **Learn → Understand → Practice → Improve**
+
+---
+
+## 🔮 Future Roadmap
+
+Planned improvements can include:
+
+* [ ] Personalized study plans
+* [ ] AI-generated quizzes
+* [ ] Practice question generation
+* [ ] Progress tracking
+* [ ] Performance analytics
+* [ ] Subject-wise learning paths
+* [ ] JEE/NEET mock tests
+* [ ] Revision & weak-topic detection
+* [ ] Multilingual learning support
+* [ ] Voice-based AI tutoring
+
+---
+
+## 📸 Project Preview
+
+🌐 **Try the live application:**
+https://thesis-learn.lovable.app
+
+---
+
+## ⚠️ Disclaimer
+
+Thesis Learn is an educational AI project intended to support learning and exam preparation.
+
+AI-generated explanations may occasionally contain inaccuracies. Students should verify important academic information using their official textbooks, teachers, and trusted educational resources.
+
+---
+
+## 👨‍💻 Author
+
+**Arish Islam**
+
+Building projects around **AI, web development, and learning technologies.**
+
+### Connect
+
+* GitHub: https://github.com/arish096
+
+---
+
+## ⭐ Support
+
+If you find this project useful or interesting, consider giving the repository a ⭐ on GitHub!
+
+---
+
+### 📚 Thesis Learn
+
+**Learn smarter. Understand deeper. Prepare better.**
+
